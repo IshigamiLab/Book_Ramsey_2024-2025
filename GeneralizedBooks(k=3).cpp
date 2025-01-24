@@ -70,7 +70,7 @@ int main() {
         for (int j = 1; j <= (n/2-1)/2; ++j) {
             D[j] = (id >> (j - 1)) & 1;
             D[n/2-j] = D[j];
-	          det_counter1+=D[j];
+	        det_counter1+=D[j];
         }
 
 	      if( det_counter1==((n/2-1)/4) ){
@@ -82,19 +82,19 @@ int main() {
             }
 
             for (unsigned long long idd=lb;idd<ub;idd++){
-	              int det_counter = 0;
-	              for (int j = 0; j < n/2; j++) {
-	                  D[j] = (idd & (1 << j)) ? 1 : 0;
+	                int det_counter = 0;
+	                for (int j = 0; j < n/2; j++) {
+	                    D[j] = (idd & (1 << j)) ? 1 : 0;
 		                det_counter+=D[j];
-                }
-
-	              if(det_counter==(n/4)){
-	      
-                for(int i = 0; i < n/2; i++) {
-                    for(int j = 0; j < n/2; j++){
-                        matrix2[i][j] = D[(j - i + n/2) % (n/2)];
                     }
-                }
+
+	                if(det_counter==(n/4)){
+	      
+                    for(int i = 0; i < n/2; i++) {
+                        for(int j = 0; j < n/2; j++){
+                            matrix2[i][j] = D[(j - i + n/2) % (n/2)];
+                        }
+                    }
 
 		            for (unsigned long long iddd=1;iddd<totalArrays;iddd++){
 		                int det_counter2=0;
@@ -126,73 +126,72 @@ int main() {
                         int flag0 = 0;
 
                         int i,j,k;
-		                    int idx;
+		                int idx;
                         int counter1 = 0;
                         int counter0 = 0;
 
-		                    #pragma omp parallel for
+		                #pragma omp parallel for
                         for(i=0;i<n-2;i++){
                             for(j=i+1;j<n-1;j++){
                                 for(k=j+1;k<n;k++){
-			                              if( ((matrix[i][j]*matrix[j][k]*matrix[i][k])==1) ){
-			                                  for(idx=0;idx<n;idx++){
-			                                      if( (i!=idx) && (j!=idx) && (k!=idx) ){
-				                                        if( matrix[i][idx]*matrix[j][idx]*matrix[k][idx] ){
-				                                            counter1++;
-				                                            if(counter1==a){
-				                                                flag1 = 1;
-				                                            }
-				                                        } 
-			                                      }
-			                                  }
-			                                  counter1=0;
-			                                  counter0=0;
-			                              } else if( ((matrix[i][j]+matrix[j][k]+matrix[i][k])==0) ){
+			                        if( ((matrix[i][j]*matrix[j][k]*matrix[i][k])==1) ){
+			                            for(idx=0;idx<n;idx++){
+			                                if( (i!=idx) && (j!=idx) && (k!=idx) ){
+				                                if( matrix[i][idx]*matrix[j][idx]*matrix[k][idx] ){
+				                                    counter1++;
+				                                    if(counter1==a){
+				                                        flag1 = 1;
+				                                    }    
+                                                } 
+			                                }
+			                            }
+			                            counter1=0;
+			                            counter0=0;
+			                        } else if( ((matrix[i][j]+matrix[j][k]+matrix[i][k])==0) ){
                                         for(idx=0;idx<n;idx++){
-			                                      if( (i!=idx) && (j!=idx) && (k!=idx) ){
-				                                        if( (matrix[i][idx]+matrix[j][idx]+matrix[k][idx])==0 ){
-				                                            counter0++;
-				                                            if(counter0==b){
-				                                                flag0 = 1;
-				                                            }
-				                                        }
-			                                      }                                                            
-			                                  }
+			                                if( (i!=idx) && (j!=idx) && (k!=idx) ){
+				                                if( (matrix[i][idx]+matrix[j][idx]+matrix[k][idx])==0 ){
+				                                    counter0++;
+				                                    if(counter0==b){
+				                                        flag0 = 1;
+				                                    }
+				                                }
+			                                }                                                            
+			                            }
                                         counter0=0;
                                         counter1=0;
                                     }
-			                          }
-		                        }
+			                    }
 		                    }
-
+		                }
 
                         if((flag0 == 0) && (flag1 == 0)){
                             std::cout << "Graph not found as below" << std::endl;
                             printMatrix(matrix);
                             std::cout << "_________________________________________________" << std::endl;
                             std::cout << "R(" << a << "," << b << ") bigger than " << n << std::endl;
-		                        std::cout << "ID is " << id << ", and idd is " << idd << endl;
+		                    std::cout << "ID is " << id << ", and idd is " << idd << endl;
                             auto end = std::chrono::high_resolution_clock::now();
                             std::chrono::duration<double, std::milli> elapsed = end - start;
                             std::cout << "Time: " << elapsed.count() << " ms" << std::endl;
-		                        std::string filename = "results_K3_GB";
-		                        filename += std::to_string(a);
-		                        filename += std::to_string(b);
-		                        filename += "_N";
-		                        filename += std::to_string(n);
-		                        filename += ".txt";
+		                    std::string filename = "results_K3_GB";
+		                    filename += std::to_string(a);
+		                    filename += std::to_string(b);
+		                    filename += "_N";
+		                    filename += std::to_string(n);
+		                    filename += ".txt";
 		    
-		                        std::ofstream outFile(filename);
-		                        if(outFile.is_open()){
-		                            for(int i=0; i<n; i++){
-			                              for(int j=0; j<n; j++){
-			                                  outFile << matrix[i][j] << " ";
-			                              }
-		                            }
-		                            outFile.close();
+		                    std::ofstream outFile(filename);
+		                    if(outFile.is_open()){
+		                        for(int i=0; i<n; i++){
+			                        for(int j=0; j<n; j++){
+			                            outFile << matrix[i][j] << " ";
+			                        }
 		                        }
-		                        string mail_command = "echo 'The process R(" + to_string(a) + "," + to_string(b) + ") is done!' | mail -s 'Done!' -A "+ filename + " " + "Your mail address";
-		                        system(mail_command.c_str());
+		                        outFile.close();
+		                    }
+		                    string mail_command = "echo 'The process R(" + to_string(a) + "," + to_string(b) + ") is done!' | mail -s 'Done!' -A "+ filename + " " + "Your mail address";
+		                    system(mail_command.c_str());
                             return 0;   
                         }
 	                    }
@@ -200,7 +199,7 @@ int main() {
 	                }
 	          }
         }
-	      std::cout << "ID " << id << " passed!" << endl;
+	    std::cout << "ID " << id << " passed!" << endl;
   }
 
   std::cout << " Cannot find the matrix that prove that R(" << a << "," << b << ") is bigger than " << n << std::endl;    
